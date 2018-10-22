@@ -10,29 +10,39 @@ import UIKit
 
 class ToDoTableViewController: UITableViewController {
     
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     var itemArray = [Item]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let item1 = Item()
-        item1.title = "wake up"
-        item1.done = true
-        itemArray.append(item1)
-        
-        let item2 = Item()
-        item2.title = "stay cheerful"
-        itemArray.append(item2)
-        
-        let item3 = Item()
-        item3.title = "go to sleep"
-        itemArray.append(item3)
-        
-        if let items = defaults.array(forKey: "SavedToDoList") as? [String]{
-            itemArray = items
+        loadData()
+    }
+    
+    // MARK: - Persistant data save, retrieve
+    
+    func loadData(){
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do{
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("failed to retrice")
+            }
         }
+    }
+    
+    func save(){
+        let encoder = PropertyListEncoder()
+        
+        do{
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("failed to save")
+        }
+        tableView.reloadData()
     }
     
     // MARK: - Add NavBar Button Configuration
@@ -44,8 +54,7 @@ class ToDoTableViewController: UITableViewController {
             let item = Item()
             item.title = textField.text!
             self.itemArray.append(item)
-            self.defaults.set(self.itemArray, forKey: "SavedToDoList")
-            self.tableView.reloadData()
+            self.save()
         }
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create New Item"
@@ -81,7 +90,7 @@ class ToDoTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        tableView.reloadData()
+        save()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
