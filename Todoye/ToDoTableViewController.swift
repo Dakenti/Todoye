@@ -10,16 +10,16 @@ import UIKit
 
 class ToDoTableViewController: UITableViewController {
     
+    let defaults = UserDefaults.standard
+    
     var itemArray = ["E-Commerce","TCP/IP","Assembler"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        if let items = defaults.array(forKey: "SavedToDoList") as? [String]{
+            itemArray = items
+        }
     }
     
     // MARK: - Add NavBar Button Configuration
@@ -28,7 +28,8 @@ class ToDoTableViewController: UITableViewController {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New ToDoye Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            self.itemArray.append(textField.text! ?? "New Item")
+            self.itemArray.append(textField.text!)
+            self.defaults.set(self.itemArray, forKey: "SavedToDoList")
             self.tableView.reloadData()
         }
         alert.addTextField { (alertTextField) in
