@@ -7,25 +7,24 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class ToDoTableViewController: UITableViewController {
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let realm = try! Realm()
     
-    var itemArray = [Item]()
+    var items: Results<Item>?
     
     var selectedCategory: Category?{
         didSet{
-            loadData()
+            loadItems()
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadData()
+        loadItems()
     }
     
     // MARK: - Add NavBar Button Configuration
@@ -34,12 +33,18 @@ class ToDoTableViewController: UITableViewController {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New ToDoye Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            let item = Item(context: self.context)
-            item.title = textField.text!
-            item.done = false
-            item.parentCategory = self.selectedCategory
-            self.itemArray.append(item)
-            self.save()
+            if let currentCategory = self.selectedCategory {
+                do{
+                    try self.realm.write {
+                        let item = Item()
+                        item.title = textField.text!
+                        currentCategory.items.append(item)
+                    }
+                } catch {
+                    print("failure in saving data \(error)")
+                }
+            }
+            self.tableView.reloadData()
         }
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create New Item"
@@ -52,34 +57,40 @@ class ToDoTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return itemArray.count
+        return items?.count ?? 1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        let item = itemArray[indexPath.row]
-        cell.textLabel?.text = item.title
+        if let item = items?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.done ? .checkmark : .none
+        } else {
+            cell.textLabel?.text = "No Items Yet"
+        }
         
-        cell.accessoryType = item.done ? .checkmark : .none
-
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        ---------deletion of an element---------
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
-        
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-        save()
+
+        if let item = items?[indexPath.row]{
+            do{
+                try realm.write {
+                    // deletion
+                    // realm.delete(item)
+                    item.done = !item.done
+                }
+            } catch {
+                print("Error in saving DONE status \(error)")
+            }
+        }
+        tableView.reloadData()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -90,15 +101,14 @@ class ToDoTableViewController: UITableViewController {
 
 extension ToDoTableViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        loadData(with: request, predicate: predicate)
+        items = items?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "createdDate", ascending: true)
+        tableView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0{
-            loadData()
+            loadItems()
+            
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
@@ -106,60 +116,16 @@ extension ToDoTableViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: - Persistant data save, retrieve
+// MARK: - Persistant data retrieve
 
 extension ToDoTableViewController{
-    
-    func save(){
-        do{
-            try context.save()
-        } catch {
-            print("Failed to save in SQLite")
-        }
+
+    func loadItems(){
+        items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        
         tableView.reloadData()
     }
-    
-    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        
-        if let additionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-        } else {
-            request.predicate = categoryPredicate
-        }
-        
-        do{
-            itemArray = try context.fetch(request)
-        } catch {
-            print("failure in reading data \(error)")
-        }
-        tableView.reloadData()
-    }
-    
-    //  ---------Property List implementation---------------------
-    
-    //    func loadData(){
-    //        if let data = try? Data(contentsOf: dataFilePath!) {
-    //            let decoder = PropertyListDecoder()
-    //            do{
-    //                itemArray = try decoder.decode([Item].self, from: data)
-    //            } catch {
-    //                print("failed to retrice")
-    //            }
-    //        }
-    //    }
-    //
-    //    func save(){
-    //        let encoder = PropertyListEncoder()
-    //
-    //        do{
-    //            let data = try encoder.encode(itemArray)
-    //            try data.write(to: dataFilePath!)
-    //        } catch {
-    //            print("failed to save")
-    //        }
-    //        tableView.reloadData()
-    //    }
+
 }
 
 

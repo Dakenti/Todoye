@@ -7,17 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		251D967F2183718100BA0F75 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251D967E2183718100BA0F75 /* Item.swift */; };
+		251D9681218371F300BA0F75 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251D9680218371F300BA0F75 /* Category.swift */; };
 		25D313A8217C97B300A93B40 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D313A7217C97B300A93B40 /* AppDelegate.swift */; };
 		25D313AD217C97B300A93B40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25D313AB217C97B300A93B40 /* Main.storyboard */; };
 		25D313AF217C97B500A93B40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 25D313AE217C97B500A93B40 /* Assets.xcassets */; };
 		25D313B2217C97B500A93B40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25D313B0217C97B500A93B40 /* LaunchScreen.storyboard */; };
 		25D313BA217CAC7E00A93B40 /* ToDoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D313B9217CAC7E00A93B40 /* ToDoTableViewController.swift */; };
-		25D313C7217F54A700A93B40 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 25D313C5217F54A700A93B40 /* DataModel.xcdatamodeld */; };
 		25DF2ED1218095D4006255FF /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DF2ED0218095D4006255FF /* CategoryTableViewController.swift */; };
 		58F512D077529B0FA508B6FC /* Pods_Todoye.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E64CAC227881632D278202B0 /* Pods_Todoye.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		251D967E2183718100BA0F75 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		251D9680218371F300BA0F75 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		25D313A4217C97B300A93B40 /* Todoye.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todoye.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		25D313A7217C97B300A93B40 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		25D313AC217C97B300A93B40 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -25,7 +28,6 @@
 		25D313B1217C97B500A93B40 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		25D313B3217C97B500A93B40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		25D313B9217CAC7E00A93B40 /* ToDoTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoTableViewController.swift; sourceTree = "<group>"; };
-		25D313C6217F54A700A93B40 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		25DF2ED0218095D4006255FF /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		3350AAE9183B86778744627D /* Pods-Todoye.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todoye.release.xcconfig"; path = "Pods/Target Support Files/Pods-Todoye/Pods-Todoye.release.xcconfig"; sourceTree = "<group>"; };
 		BA2F68164C99E08B0F3B69F1 /* Pods-Todoye.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todoye.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Todoye/Pods-Todoye.debug.xcconfig"; sourceTree = "<group>"; };
@@ -104,7 +106,8 @@
 		25D313C0217DE75500A93B40 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				25D313C5217F54A700A93B40 /* DataModel.xcdatamodeld */,
+				251D9680218371F300BA0F75 /* Category.swift */,
+				251D967E2183718100BA0F75 /* Item.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -222,11 +225,13 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-Todoye/Pods-Todoye-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -240,8 +245,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				251D967F2183718100BA0F75 /* Item.swift in Sources */,
+				251D9681218371F300BA0F75 /* Category.swift in Sources */,
 				25D313A8217C97B300A93B40 /* AppDelegate.swift in Sources */,
-				25D313C7217F54A700A93B40 /* DataModel.xcdatamodeld in Sources */,
 				25D313BA217CAC7E00A93B40 /* ToDoTableViewController.swift in Sources */,
 				25DF2ED1218095D4006255FF /* CategoryTableViewController.swift in Sources */,
 			);
@@ -443,19 +449,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		25D313C5217F54A700A93B40 /* DataModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				25D313C6217F54A700A93B40 /* DataModel.xcdatamodel */,
-			);
-			currentVersion = 25D313C6217F54A700A93B40 /* DataModel.xcdatamodel */;
-			path = DataModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 25D3139C217C97B200A93B40 /* Project object */;
 }
